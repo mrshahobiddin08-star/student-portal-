@@ -1,0 +1,68 @@
+{
+  "math": {
+    "title": "Amaliy matematika 1",
+    "questions": [
+      {
+        "id": "math-1",
+        "text": "Matematika 1-savol: Quyidagi matritsaning aniqlovchisini (determinant) hisoblang.",
+        "options": ["To'g'ri javob A", "Noto'g'ri javob B", "Noto'g'ri javob C", "Ma'lumot kam"],
+        "correct": 0
+      }
+    ]
+  },
+  "it1": {
+    "title": "Axborot texnologiyalari 1",
+    "questions": [
+      {
+        "id": "it1-1",
+        "text": "Axborot texnologiyalari 1-savol: Kompyuter xotira blokining boshqaruvi qanday ishlaydi?",
+        "options": ["Xato variant", "To'g'ri javob B", "Xato blok", "Hech biri"],
+        "correct": 1
+      }
+    ]
+  },
+  "prog": {
+    "title": "Dasturlash asoslari",
+    "questions": [
+      {
+        "id": "prog-1",
+        "text": "Dasturlash asoslari 1-savol: Massivning 1-indeksi qanday qiymat qaytaradi?",
+        "options": ["Sintaktik xato", "Aniqlanmagan", "To'g'ri yechim C", "Dastur to'xtaydi"],
+        "correct": 2
+      }
+    ]
+  },
+  "eng": {
+    "title": "Ingliz tili 1",
+    "questions": [
+      {
+        "id": "eng-1",
+        "text": "English Question 1: Choose the correct grammatical structure.",
+        "options": ["Incorrect distractor", "Wrong vocabulary", "Flawed preposition", "Correct Option D"],
+        "correct": 3
+      }
+    ]
+  },
+  "econ_it": {
+    "title": "Iqtisodiyotda AKT va tizimlar",
+    "questions": [
+      {
+        "id": "econ_it-1",
+        "text": "Iqtisodiyotda AKT 1-savol: ERP tizimlari iqtisodiy samaradorlikni qanday oshiradi?",
+        "options": ["To'g'ri yechim A", "Eski qarash", "Xato tahlil", "Samarasiz reja"],
+        "correct": 0
+      }
+    ]
+  },
+  "econ_th": {
+    "title": "Iqtisodiyot nazariyasi",
+    "questions": [
+      {
+        "id": "econ_th-1",
+        "text": "Iqtisodiyot nazariyasi 1-savol: Talab va taklif qonuniyatlarining grafik muvozanati nimani anglatadi?",
+        "options": ["Muvozanatsiz holat", "To'g'ri tahlil B", "Inflyatsiya pasayishi", "Monopoliya"],
+        "correct": 1
+      }
+    ]
+  }
+}
