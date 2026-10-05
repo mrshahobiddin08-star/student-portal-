@@ -9,7 +9,7 @@ app.secret_key = secrets.token_hex(16)
 
 ADMIN_PASSWORD = "1004"
 
-# 6 ta fandan 50 tadan savol (Jami 300 ta mukammal va real imtihon savollari)
+# 6 ta fandan 50 tadan savol (Jami 300 ta to'liq professional bazasi)
 DATABASE = {
     "math": {
         "title": "Amaliy matematika 1",
@@ -79,7 +79,6 @@ DATABASE = {
     }
 }
 
-# Global In-Memory xotira (Noutbukingiz va server xotirasini umuman to'ldirmaydi)
 STUDENT_LOGS = []
 STUDENT_NOTES = [
     {"id": 1, "text": "Matematika 3-ma'ruzadagi matritsalar xossalarini qayta o'qish kerak.", "date": "Bugun"},
@@ -95,7 +94,6 @@ BASE_TEMPLATE = """
     <title>Talabalar Imtihon Oldi Tayyorgarlik Portali</title>
     <script src="https://jsdelivr.net"></script>
     <link rel="stylesheet" href="https://cloudflare.com">
-    <style>body { font-family: 'Inter', sans-serif; }</style>
 </head>
 <body class="bg-slate-50 text-slate-800 flex h-screen overflow-hidden">
     <aside class="w-80 bg-slate-900 text-white flex flex-col justify-between shrink-0 shadow-xl">
@@ -162,3 +160,4 @@ BASE_TEMPLATE = """
                 <input type="password" name="password" required placeholder="••••" class="w-full border border-slate-200 rounded-xl px-4 py-2.5 text-center font-mono tracking-widest text-lg focus:outline-hidden focus:ring-2 focus:ring-indigo-500">
             </div>
             <div class="flex space-x-2">
+                <button type="button" onclick="document.getElementById('admin-modal').classList.add('hidden')" class="flex-1 bg-slate-100 text-slate-600 py-2.5 rounded-xl text-sm font-medium">Bekor qilish</button>
