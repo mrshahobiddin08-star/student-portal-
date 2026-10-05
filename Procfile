@@ -1,2 +1,3 @@
-web: gunicorn student:app
+web: gunicorn app:app
+
 
