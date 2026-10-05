@@ -9,155 +9,180 @@ app.secret_key = secrets.token_hex(16)
 
 ADMIN_PASSWORD = "1004"
 
-# 6 ta fandan 50 tadan savol (Jami 300 ta to'liq professional bazasi)
-DATABASE = {
-    "math": {
-        "title": "Amaliy matematika 1",
-        "questions": [
-            {
-                "id": f"math-{i}",
-                "text": f"Matematika savoli {i}: Quyidagi matritsaning aniqlovchisini (determinant) hisoblang yoki funksiyaning hosilasini toping. X-{i} qiymati qanday aniqlanadi?",
-                "options": [f"To'g'ri javob varianti A ({i})", "Noto'g'ri javob varianti B", "Noto'g'ri javob varianti C", "Ma'lumotlar yetarli emas"],
-                "correct": 0
-            } for i in range(1, 51)
-        ]
-    },
-    "it1": {
-        "title": "Axborot texnologiyalari 1",
-        "questions": [
-            {
-                "id": f"it1-{i}",
-                "text": f"Axborot texnologiyalari savoli {i}: Kompyuter arxitekturasi va operatsion tizimlar asoslariga ko'ra, xotira blokining {i}-darajali boshqaruvi qanday ishlaydi?",
-                "options": ["Noto'g'ri variant X", f"To'g'ri tasniflangan javob B ({i})", "Xato javob bloki", "Hech biri to'g'ri emas"],
-                "correct": 1
-            } for i in range(1, 51)
-        ]
-    },
-    "prog": {
-        "title": "Dasturlash asoslari",
-        "questions": [
-            {
-                "id": f"prog-{i}",
-                "text": f"Dasturlash asoslari {i}: Algoritmlash tillarida (C++ yoki Python) sikllar va massivlar bilan ishlashda massivning {i}-indeksi qanday qiymat qaytaradi?",
-                "options": ["Sintaktik xatolik beradi", "O'zgaruvchi qiymati aniqlanmaydi", f"To'g'ri algoritmik yechim C ({i})", "Dastur to'xtab qoladi"],
-                "correct": 2
-            } for i in range(1, 51)
-        ]
-    },
-    "eng": {
-        "title": "Ingliz tili 1",
-        "questions": [
-            {
-                "id": f"eng-{i}",
-                "text": f"English Grammar Question {i}: Choose the correct grammatical structure or tense aspect to complete the Academic University sentence structure number {i}.",
-                "options": ["Incorrect grammar distractor", "Wrong vocabulary choice", "Flawed preposition use", f"Correct English Option D ({i})"],
-                "correct": 3
-            } for i in range(1, 51)
-        ]
-    },
-    "econ_it": {
-        "title": "Iqtisodiyotda AKT va tizimlar",
-        "questions": [
-            {
-                "id": f"econ_it-{i}",
-                "text": f"Iqtisodiyotda AKT savoli {i}: Korxona resurslarini rejalashtirish (ERP) va elektron tijorat tizimlarining {i}-modeli iqtisodiy samaradorlikni qanday oshiradi?",
-                "options": [f"To'g'ri raqamli iqtisodiy yechim A ({i})", "Eski tizimli qarash", "Xato tahliliy ma'lumot", "Samarasiz deb topilgan reja"],
-                "correct": 0
-            } for i in range(1, 51)
-        ]
-    },
-    "econ_th": {
-        "title": "Iqtisodiyot nazariyasi",
-        "questions": [
-            {
-                "id": f"econ_th-{i}",
-                "text": f"Iqtisodiyot nazariyasi {i}: Mikroiqtisodiyot va makroiqtisodiyot asoslari bo'yicha talab va taklif qonuniyatlarining {i}-grafik muvozanat nuqtasi nimani anglatadi?",
-                "options": ["Muvozanatsiz bozor holati", f"To'g'ri makroiqtisodiy tahlil B ({i})", "Inflyatsiya darajasining pasayishi", "Monopoliya ko'rsatkichi"],
-                "correct": 1
-            } for i in range(1, 51)
-        ]
-    }
-}
+# Savollarni tashqi yengil JSON fayldan yuklash
+def load_db():
+    try:
+        with open('questions.json', 'r', encoding='utf-8') as f:
+            return json.load(f)
+    except:
+        return {}
 
+DATABASE = load_db()
 STUDENT_LOGS = []
-STUDENT_NOTES = [
-    {"id": 1, "text": "Matematika 3-ma'ruzadagi matritsalar xossalarini qayta o'qish kerak.", "date": "Bugun"},
-    {"id": 2, "text": "Dasturlash asoslari imtihon savollaridagi massiv indekslariga e'tibor berish lozim.", "date": "Kecha"}
-]
+STUDENT_NOTES = []
 
 BASE_TEMPLATE = """
 <!DOCTYPE html>
 <html lang="uz">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Talabalar Imtihon Oldi Tayyorgarlik Portali</title>
+    <title>Talaba Portali</title>
     <script src="https://jsdelivr.net"></script>
     <link rel="stylesheet" href="https://cloudflare.com">
 </head>
-<body class="bg-slate-50 text-slate-800 flex h-screen overflow-hidden">
-    <aside class="w-80 bg-slate-900 text-white flex flex-col justify-between shrink-0 shadow-xl">
+<body class="bg-slate-50 flex h-screen overflow-hidden text-slate-800">
+    <aside class="w-80 bg-slate-900 text-white flex flex-col justify-between p-4 shadow-xl">
         <div>
-            <div class="p-6 border-b border-slate-800 flex items-center space-x-3">
-                <div class="bg-indigo-600 p-2 rounded-lg text-white"><i class="fas fa-graduation-cap text-xl"></i></div>
-                <div>
-                    <h1 class="font-bold text-lg leading-tight">Talaba Portali</h1>
-                    <span class="text-xs text-slate-400">1-kurs tayyorgarlik</span>
-                </div>
+            <div class="p-4 border-b border-slate-800 font-bold text-lg flex items-center space-x-2">
+                <i class="fas fa-graduation-cap text-indigo-500"></i><span>Talaba Portali</span>
             </div>
-            <div class="p-4 space-y-1">
-                <p class="px-3 text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Fanlar papkasi</p>
+            <div class="space-y-1 mt-4">
                 {% for key, sub in db.items() %}
-                <a href="{{ url_for('subject_page', key=key) }}" class="w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-sm font-medium {% if active_tab == key %}bg-slate-800 text-white{% else %}text-slate-400 hover:bg-slate-800 hover:text-white{% endif %} transition-all">
-                    <div class="flex items-center space-x-3">
-                        <i class="fas fa-folder text-amber-400 text-lg"></i>
-                        <span class="truncate max-w-[160px]">{{ sub.title }}</span>
-                    </div>
-                    <span class="bg-slate-700 text-xs px-2 py-0.5 rounded-full text-slate-300">50</span>
+                <a href="{{ url_for('subject_page', key=key) }}" class="flex justify-between p-2 rounded-sm text-sm {% if active_tab == key %}bg-slate-800 text-white{% else %}text-slate-400 hover:bg-slate-800{% endif %}">
+                    <span>{{ sub.title }}</span><span class="bg-slate-700 text-xs px-2 rounded-full">Test</span>
                 </a>
                 {% endfor %}
-                <p class="px-3 text-xs font-semibold text-slate-400 uppercase tracking-wider pt-4 mb-2">Shaxsiy & Tahlil</p>
-                <a href="{{ url_for('results_page') }}" class="w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-medium {% if active_tab == 'results' %}bg-slate-800 text-white{% else %}text-slate-400 hover:bg-slate-800 hover:text-white{% endif %} transition-all">
-                    <i class="fas fa-folder-open text-emerald-400 text-lg"></i><span>7-Papka: Natijalar</span>
-                </a>
-                <a href="{{ url_for('notes_page') }}" class="w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-medium {% if active_tab == 'notes' %}bg-slate-800 text-white{% else %}text-slate-400 hover:bg-slate-800 hover:text-white{% endif %} transition-all">
-                    <i class="fas fa-book text-sky-400 text-lg"></i><span>Eslatmalar (Notes)</span>
-                </a>
+                <div class="border-t border-slate-800 my-2"></div>
+                <a href="{{ url_for('results_page') }}" class="block p-2 text-sm text-emerald-400 hover:bg-slate-800 rounded-sm">7-Papka: Natijalar</a>
+                <a href="{{ url_for('notes_page') }}" class="block p-2 text-sm text-sky-400 hover:bg-slate-800 rounded-sm">Eslatmalar (Notes)</a>
             </div>
         </div>
-        <div class="p-4 border-t border-slate-800">
+        <div class="border-t border-slate-800 pt-2">
             {% if session.get('is_admin') %}
-                <a href="{{ url_for('admin_page') }}" class="w-full bg-indigo-600 text-white text-center block py-2 rounded-lg text-sm font-medium mb-2"><i class="fas fa-user-shield mr-2"></i>Admin Panel</a>
-                <a href="{{ url_for('admin_logout') }}" class="w-full bg-slate-800 text-rose-400 text-center block py-1.5 rounded-lg text-xs hover:bg-rose-950 transition-all">Chiqish</a>
+                <a href="{{ url_for('admin_page') }}" class="block bg-indigo-600 text-white text-center py-2 rounded-sm text-sm">Admin Panel</a>
+                <a href="{{ url_for('admin_logout') }}" class="block text-center text-xs text-rose-400 mt-1">Chiqish</a>
             {% else %}
-                <button onclick="document.getElementById('admin-modal').classList.remove('hidden')" class="w-full bg-slate-800 hover:bg-indigo-600 text-slate-300 hover:text-white py-2 px-4 rounded-lg text-sm font-medium flex items-center justify-center space-x-2 transition-all"><i class="fas fa-user-shield"></i><span>Admin Panelga kirish</span></button>
+                <button onclick="document.getElementById('admin-modal').classList.remove('hidden')" class="w-full bg-slate-800 py-2 rounded-sm text-sm">Admin Kirish</button>
             {% endif %}
         </div>
     </aside>
-
-    <main class="flex-1 flex flex-col h-full overflow-hidden">
-        <header class="bg-white border-b border-slate-200 h-16 flex items-center justify-between px-8 shrink-0 shadow-xs">
-            <form action="{{ url_for('search_page') }}" method="GET" class="w-96 relative">
-                <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
-                <input type="text" name="q" value="{{ query_val or '' }}" placeholder="Tizim bo'yicha savollarni qidirish..." class="w-full bg-slate-50 pl-10 pr-4 py-2 rounded-xl text-sm border border-slate-200 focus:outline-hidden focus:ring-2 focus:ring-indigo-500 focus:bg-white transition-all">
+    <main class="flex-1 flex flex-col">
+        <header class="bg-white border-b h-16 flex items-center justify-between px-6">
+            <form action="{{ url_for('search_page') }}" method="GET" class="relative">
+                <input type="text" name="q" placeholder="Qidiruv..." class="bg-slate-100 px-4 py-1.5 rounded-lg text-sm w-64 focus:outline-hidden">
             </form>
-            <div class="text-sm font-semibold text-slate-600 bg-slate-100 px-4 py-1.5 rounded-full">{{ current_title }}</div>
+            <div class="text-sm font-semibold bg-slate-100 px-3 py-1 rounded-full">{{ current_title }}</div>
         </header>
-        <div class="flex-1 overflow-y-auto p-8">
-            {% block content %}{% endblock %}
-        </div>
+        <div class="flex-1 overflow-y-auto p-6">{% block content %}{% endblock %}</div>
     </main>
-
-    <div id="admin-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs hidden items-center justify-center z-50 p-4">
-        <form action="{{ url_for('admin_login') }}" method="POST" class="bg-white w-full max-w-sm rounded-2xl p-6 shadow-xl space-y-4">
-            <div class="text-center space-y-1">
-                <i class="fas fa-lock text-3xl text-indigo-500"></i>
-                <h3 class="font-bold text-xl text-slate-900">Admin xavfsizligi</h3>
-                <p class="text-xs text-slate-400">Kirish kodini kiriting (Parol: 1004)</p>
-            </div>
-            <div>
-                <label class="block text-xs font-semibold text-slate-500 mb-1 uppercase">Parol kodi</label>
-                <input type="password" name="password" required placeholder="••••" class="w-full border border-slate-200 rounded-xl px-4 py-2.5 text-center font-mono tracking-widest text-lg focus:outline-hidden focus:ring-2 focus:ring-indigo-500">
-            </div>
+    <div id="admin-modal" class="fixed inset-0 bg-slate-900/50 hidden items-center justify-center p-4">
+        <form action="{{ url_for('admin_login') }}" method="POST" class="bg-white p-6 rounded-lg w-full max-w-sm space-y-4">
+            <h3 class="font-bold text-center">Admin Kodini kiriting</h3>
+            <input type="password" name="password" required class="w-full border p-2 text-center font-mono" placeholder="••••">
             <div class="flex space-x-2">
-                <button type="button" onclick="document.getElementById('admin-modal').classList.add('hidden')" class="flex-1 bg-slate-100 text-slate-600 py-2.5 rounded-xl text-sm font-medium">Bekor qilish</button>
+                <button type="button" onclick="document.getElementById('admin-modal').classList.add('hidden')" class="w-1/2 bg-slate-100 py-2 rounded-sm">Bekor qilish</button>
+                <button type="submit" class="w-1/2 bg-indigo-600 text-white py-2 rounded-sm">Kirish</button>
+            </div>
+        </form>
+    </div>
+</body>
+</html>
+"""
+
+SUBJECT_TEMPLATE = """
+{% extends "base" %}
+{% block content %}
+<div class="space-y-6">
+    <div class="bg-indigo-600 rounded-xl p-6 text-white flex justify-between items-center shadow-md">
+        <div>
+            <h2 class="text-xl font-bold">{{ sub_data.title }}</h2>
+            <p class="text-xs text-indigo-100 mt-1">Har bir savolga 30 soniya vaqt beriladi.</p>
+        </div>
+        <button onclick="startQuiz()" class="bg-white text-indigo-600 font-semibold px-4 py-2 rounded-lg text-sm shadow-sm">Testni Boshlash</button>
+    </div>
+    <div id="quiz-panel" class="hidden bg-white border rounded-xl p-6 space-y-4 shadow-xs">
+        <div class="flex justify-between text-sm font-medium border-b pb-2">
+            <span>Savol: <span id="q-idx" class="text-indigo-600 font-bold">1</span></span>
+            <span class="text-rose-600 font-bold"><i class="fas fa-clock mr-1"></i><span id="timer">30</span>s</span>
+        </div>
+        <div id="q-text" class="font-medium text-lg text-slate-900"></div>
+        <div id="q-opts" class="grid grid-cols-1 gap-2"></div>
+    </div>
+</div>
+<form id="res-form" action="{{ url_for('submit_result') }}" method="POST" class="hidden">
+    <input type="hidden" name="subject_title" value="{{ sub_data.title }}">
+    <input type="hidden" name="correct_count" id="c-count">
+</form>
+<script>
+    let questions = {{ questions_json | safe }};
+    let idx = 0, correct = 0, timer = 30, interval = null;
+    function startQuiz() { document.getElementById('quiz-panel').classList.remove('hidden'); idx=0; correct=0; showQ(); }
+    function showQ() {
+        if(idx >= questions.length) { clearInterval(interval); document.getElementById('c-count').value = correct; document.getElementById('res-form').submit(); return; }
+        timer = 30; document.getElementById('timer').innerText = timer;
+        clearInterval(interval);
+        interval = setInterval(() => { timer--; document.getElementById('timer').innerText = timer; if(timer<=0) { idx++; showQ(); } }, 1000);
+        let q = questions[idx];
+        document.getElementById('q-idx').innerText = (idx + 1);
+        document.getElementById('q-text').innerText = q.text;
+        let container = document.getElementById('q-opts'); container.innerHTML = '';
+        q.options.forEach((opt, oIdx) => {
+            let btn = document.createElement('button');
+            btn.className = "w-full text-left p-3 border rounded-xl text-sm hover:bg-slate-50 transition-all";
+            btn.innerText = opt;
+            btn.onclick = () => { if(oIdx === q.correct) correct++; idx++; showQ(); };
+            container.appendChild(btn);
+        });
+    }
+</script>
+{% endblock %}
+"""
+
+RESULTS_TEMPLATE = """
+{% extends "base" %}
+{% block content %}
+<div class="space-y-4">
+    <h2 class="text-lg font-bold text-slate-900">7-Papka: Natijalar</h2>
+    <div class="bg-white border rounded-xl overflow-hidden shadow-xs">
+        <table class="w-full text-left text-sm">
+            <tr class="bg-slate-50 border-b text-xs text-slate-500 uppercase font-semibold"><th class="p-3">Fan</th><th class="p-3">Sana</th><th class="p-3">Natija</th><th class="p-3">Foiz</th></tr>
+            {% for log in logs %}<tr class="border-b"><td class="p-3 font-medium">{{ log.subjectTitle }}</td><td class="p-3 text-xs text-slate-400">{{ log.date }}</td><td class="p-3">{{ log.score }}</td><td class="p-3 font-bold text-emerald-600">{{ log.percent }}%</td></tr>
+            {% else %}<tr><td colspan="4" class="p-4 text-center text-slate-400">Hali natijalar yo'q.</td></tr>{% endfor %}
+        </table>
+    </div>
+</div>
+{% endblock %}
+"""
+
+NOTES_TEMPLATE = """
+{% extends "base" %}
+{% block content %}
+<div class="space-y-4">
+    <div class="flex justify-between items-center">
+        <h2 class="text-lg font-bold">Eslatmalar</h2>
+        <form action="{{ url_for('add_note') }}" method="POST" class="flex space-x-2">
+            <input type="text" name="note_text" required placeholder="Yangi qayd..." class="border px-3 py-1 text-sm rounded-lg">
+            <button type="submit" class="bg-sky-500 text-white px-3 py-1 text-sm rounded-lg">+</button>
+        </form>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        {% for note in notes %}<div class="bg-amber-50 border border-amber-200 p-4 rounded-xl flex flex-col justify-between h-32"><p class="text-sm text-slate-700 font-medium">{{ note.text }}</p><div class="flex justify-between items-center text-xs text-slate-400 mt-2"><span>{{ note.date }}</span><a href="{{ url_for('delete_note', note_id=note.id) }}" class="text-rose-500"><i class="fas fa-trash"></i></a></div></div>{% endfor %}
+    </div>
+</div>
+{% endblock %}
+"""
+
+SEARCH_TEMPLATE = """
+{% extends "base" %}
+{% block content %}
+<div class="space-y-4">
+    <h2 class="text-lg font-bold">Qidiruv natijalari: "{{ query }}"</h2>
+    <div class="grid grid-cols-1 gap-2">
+        {% for res in results %}<a href="{{ url_for('subject_page', key=res.sub_key) }}" class="bg-white border p-4 rounded-xl block hover:border-indigo-500"><span class="text-xs bg-indigo-50 text-indigo-600 px-2 py-0.5 rounded-sm mr-2 font-semibold">{{ res.sub_title }}</span><span class="text-sm text-slate-700 font-medium">{{ res.text }}</span></a>
+        {% else %}<div class="text-slate-400 text-sm">Hech narsa topilmadi.</div>{% endfor %}
+    </div>
+</div>
+{% endblock %}
+"""
+
+ADMIN_TEMPLATE = """
+{% extends "base" %}
+{% block content %}
+<div class="space-y-6">
+    <h2 class="text-xl font-bold">Admin Panel (Monitoring)</h2>
+    <div class="grid grid-cols-2 gap-4">
+        <div class="bg-white border p-4 rounded-xl">
+            <div class="text-xs text-slate-400">Umumiy urinishlar</div>
+            <div class="text-2xl font-bold mt-1">{{ total_attempts }} ta</div>
+        </div>
+        <div class="bg-white border p-4 rounded-xl">
